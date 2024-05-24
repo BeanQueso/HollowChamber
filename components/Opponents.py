@@ -57,6 +57,13 @@ class AggressiveAlex(Opponents):
 
     def nextMove():
         pass
+
+class CautiousCarl(Opponents):
+    def __init__(self,display):
+        super().__init__("CautiousCarl",display)
+
+    def nextMove():
+        pass
    
 
     
