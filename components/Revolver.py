@@ -21,10 +21,7 @@ class Revolver():
         pass
 
     def getChances(self):
-        x = 0
-        for i in self.previousIndices:
-            if(i):
-
+        pass
 
     
 
