@@ -8,6 +8,7 @@ from components.Opponents import MathyMartha
 from components.Opponents import RiskyRick
 from components.Opponents import AggressiveAlex
 from components.Opponents import CautiousCarl
+from components.Opponents import BluffingBetty
 
 
 
@@ -20,6 +21,16 @@ class Game():
         self.rickCharacter = RiskyRick(self.display)
         self.alexCharacter = AggressiveAlex(self.display)
         self.carlCharacter = CautiousCarl(self.display)
+        self.bettyCharacter = BluffingBetty(self.display)
+
+        self.opponentsGroup = pygame.sprite.Group()
+
+        self.opponentsGroup.add(self.marthaCharacter)
+        self.opponentsGroup.add(self.rickCharacter)
+        self.opponentsGroup.add(self.alexCharacter)
+        self.opponentsGroup.add(self.carlCharacter)
+        self.opponentsGroup.add(self.bettyCharacter)
+
         
 
     def drawStartScreen(self):
@@ -31,10 +42,11 @@ class Game():
         optionText = Text.Text(640,180,"Choose your operator",(255,255,255),34)
         optionText.show(self.display)
 
-        self.marthaCharacter.renderStart(230,600)
-        self.rickCharacter.renderStart(470,600)
-        self.alexCharacter.renderStart(710,600)
-        self.carlCharacter.renderStart(950,600)
+        x = 230
+
+        for i in self.opponentsGroup:
+            i.renderStart(x,600)
+            x+=240
 
 
     def drawPlayScreen(self,opponent):
