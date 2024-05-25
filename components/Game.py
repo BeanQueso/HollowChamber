@@ -18,19 +18,24 @@ class Game():
         self.display = display
         self.Revolver = Revolver(6)
 
-        self.marthaCharacter = MathyMartha(self.display)
-        self.rickCharacter = RiskyRick(self.display)
-        self.alexCharacter = AggressiveAlex(self.display)
-        self.carlCharacter = CautiousCarl(self.display)
-        self.bettyCharacter = BluffingBetty(self.display)
+        marthaCharacter = MathyMartha(self.display)
+        rickCharacter = RiskyRick(self.display)
+        alexCharacter = AggressiveAlex(self.display)
+        carlCharacter = CautiousCarl(self.display)
+        bettyCharacter = BluffingBetty(self.display)
 
         self.opponentsGroup = pygame.sprite.Group()
 
-        self.opponentsGroup.add(self.marthaCharacter)
-        self.opponentsGroup.add(self.rickCharacter)
-        self.opponentsGroup.add(self.alexCharacter)
-        self.opponentsGroup.add(self.carlCharacter)
-        self.opponentsGroup.add(self.bettyCharacter)
+        self.opponentsGroup.add(marthaCharacter)
+        self.opponentsGroup.add(rickCharacter)
+        self.opponentsGroup.add(alexCharacter)
+        self.opponentsGroup.add(carlCharacter)
+        self.opponentsGroup.add(bettyCharacter)
+
+        self.player = Player(640,600)
+        self.playerGroup = pygame.sprite.Group()
+
+        self.playerGroup.add(self.player)
 
         
 
@@ -59,6 +64,14 @@ class Game():
 
         startBubble.show(self.display)
         startMessage.show(self.display)
+
+        self.playerGroup.draw(self.display)
+
+        playerResponse = Text(self.player.rect.centerx+200,self.player.rect.centery, "Nuh uh.", (0,0,0),28)
+        playerBubble = Bubble(playerResponse.text_rect.centerx,playerResponse.text_rect.centery, 100)
+
+        playerBubble.show(self.display)
+        playerResponse.show(self.display)
 
 
         
