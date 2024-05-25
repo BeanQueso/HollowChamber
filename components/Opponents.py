@@ -1,5 +1,5 @@
 import pygame
-import components.Text as Text
+from components.Text import Text
 import random
 
 class Opponents(pygame.sprite.Sprite):
@@ -17,10 +17,19 @@ class Opponents(pygame.sprite.Sprite):
         self.rect.centerx = x
         self.rect.centery = y
 
-        self.text = Text.Text(self.rect.centerx-75,self.rect.centery+100,self.name,(255,255,255),34)
+        text = Text(self.rect.centerx-75,self.rect.centery+100,self.name,(255,255,255),34)
         
         self.display.blit(self.image, self.rect)
-        self.text.show(self.display)
+        text.show(self.display)
+
+    def renderPlaying(self):
+        self.image = pygame.transform.scale(self.image,[400,400])
+        self.rect.centerx = 640
+        self.rect.centery = 300
+
+        text = Text(self.rect.centerx,self.rect.centery+self.textDiff,self.name,(255,255,255),34)
+        text.show(self.display)
+        self.display.blit(self.image, self.rect)
 
 
 
@@ -34,6 +43,10 @@ class Opponents(pygame.sprite.Sprite):
 class RiskyRick(Opponents):
     def __init__(self,display):
         super().__init__("RiskyRick",display)
+        self.startMessage = "Heh... what's the worst that could happen?"
+        self.bubbleWidth = 600
+        self.textDiff = 195
+
 
     def nextMove():
         chance = random.randint(1,10)
@@ -45,7 +58,10 @@ class RiskyRick(Opponents):
 class MathyMartha(Opponents):
     def __init__(self,display):
         super().__init__("MathyMartha",display)
-    
+        self.startMessage = "Erm... according to my calculations, you are dead."
+        self.bubbleWidth = 700
+        self.textDiff = 165
+
     def nextMove():
         
         pass
@@ -54,6 +70,9 @@ class MathyMartha(Opponents):
 class AggressiveAlex(Opponents):
     def __init__(self,display):
         super().__init__("AggressiveAlex",display)
+        self.startMessage = "HAHAHAHAHA YOU'RE FINISHED"
+        self.bubbleWidth = 380
+        self.textDiff = 230
 
     def nextMove():
         pass
@@ -62,6 +81,9 @@ class AggressiveAlex(Opponents):
 class CautiousCarl(Opponents):
     def __init__(self,display):
         super().__init__("CautiousCarl",display)
+        self.startMessage = "Uh.. uhm.. please have some mercy..."
+        self.bubbleWidth = 500
+        self.textDiff = 195
 
     def nextMove():
         pass
@@ -69,6 +91,9 @@ class CautiousCarl(Opponents):
 class BluffingBetty(Opponents):
     def __init__(self,display):
         super().__init__("BluffingBetty",display)
+        self.startMessage = "Good luck kid, you're going to need it."
+        self.bubbleWidth = 500
+        self.textDiff = 185
 
     def nextMove():
         pass

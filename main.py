@@ -22,6 +22,9 @@ def update(self,surface):
 running = True
 
 starting = True
+playing = False
+
+chosen = None
 
 mainGame = Game.Game(display_surface)
 
@@ -34,12 +37,26 @@ while running:
     #If player turn: Spin reveovler and let player choose
     # If Opponent turn: Spin revovler and let Ai choose    
 
+    for event in pygame.event.get(): # over here im just checking if the 
+        if event.type == pygame.QUIT:
+            running = False
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and starting == True:
+            pos = pygame.mouse.get_pos()
+            for opp in mainGame.opponentsGroup:
+                if opp.rect.collidepoint(pos):
+                    starting = False
+                    playing = True
+                    chosen = opp
+
 
     display_surface.fill((100,100,100))
     #wallGroup.update(display_surface)
 
     if starting:
         mainGame.drawStartScreen()
+
+    if playing:
+        mainGame.drawPlayScreen(chosen)
 
     pygame.display.update()
     clock.tick(FPS)

@@ -1,9 +1,10 @@
 import random
-import components.Text as Text
-import components.Revolver as Revolver
 import pygame
-from components import Player
-from components import Walls
+
+from components.Text import Text
+from components.Revolver import Revolver
+from components.Player import Player
+from components.Bubble import Bubble
 from components.Opponents import MathyMartha
 from components.Opponents import RiskyRick
 from components.Opponents import AggressiveAlex
@@ -15,7 +16,7 @@ from components.Opponents import BluffingBetty
 class Game():
     def __init__(self, display):
         self.display = display
-        self.Revolver = Revolver.Revolver(6)
+        self.Revolver = Revolver(6)
 
         self.marthaCharacter = MathyMartha(self.display)
         self.rickCharacter = RiskyRick(self.display)
@@ -36,10 +37,10 @@ class Game():
     def drawStartScreen(self):
         self.display.fill((50,0,20))
 
-        welcomeText = Text.Text(640,100,"Hollow Chamber",(255,0,0),130)
+        welcomeText = Text(640,100,"Hollow Chamber",(255,0,0),130)
         welcomeText.show(self.display)
 
-        optionText = Text.Text(640,180,"Choose your operator",(255,255,255),34)
+        optionText = Text(640,180,"Choose your operator",(255,255,255),34)
         optionText.show(self.display)
 
         x = 230
@@ -50,8 +51,15 @@ class Game():
 
 
     def drawPlayScreen(self,opponent):
-        
-        pass
+        self.display.fill((50,0,20))
+        opponent.renderPlaying()
+
+        startBubble = Bubble(opponent.rect.x+opponent.rect.width/2,opponent.rect.y-50,opponent.bubbleWidth)
+        startMessage = Text(startBubble.rect.centerx,startBubble.rect.centery,opponent.startMessage, (0,0,0), 28) 
+
+        startBubble.show(self.display)
+        startMessage.show(self.display)
+
 
         
         
