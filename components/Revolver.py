@@ -18,22 +18,10 @@ class Revolver():
         if (self.myIndex == self.revolverIndex):
             return True
         return False
-        pass
 
     def getChances(self):
-        pass
-
-    
-
-
-
-    
-
-
-
-        
-
-            
-                
-            
-            
+        x = 0
+        for i in self.previousIndices:
+            if not i:
+                x += 1
+        return 1/x
