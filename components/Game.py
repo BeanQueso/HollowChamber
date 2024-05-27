@@ -20,6 +20,7 @@ class Game():
         self.isShootingSelf = None
         self.answer = None
         self.madeChoice = False
+        self.hasSpinned = False
 
         marthaCharacter = MathyMartha(self.display)
         rickCharacter = RiskyRick(self.display)
@@ -86,34 +87,51 @@ class Game():
     def doGameLoop(self, opp):
         if self.isPlayerTurn:
             self.player.speak("Hmm...", self.display)
+            opp.speak("Your Turn", self.display)
 
             if not self.madeChoice:
+                if not self.hasSpinned:
+                    opp.speak("Spin the Revolver Little Boy...", self.display)
+                    t0 = Text(200, 400, "Spin Revovler", (255, 255, 255), 50)
+                    t0.show(self.display)
+                else:
+                    t1 = Text(200, 400, "Shoot Yourself", (255, 255, 255), 50)
+                    t1.show(self.display)
+                    t2 = Text(1080, 400, "Shoot Opponent", (255, 255, 255), 50)
+                    t2.show(self.display)
                 for event in pygame.event.get():
-                    if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_SPACE:
-                            spins = self.rollDice()
-                            self.answer = self.Revolver.canShoot(spins)
-                            print("Spinned")
 
-                        elif event.key == pygame.K_q:
-                            self.isShootingSelf = True
-                            self.madeChoice = True
-                            print("Shot MYself")
+                    pos = pygame.mouse.get_pos()
 
-                        elif event.key == pygame.K_e:
-                            self.isShootingSelf = False
-                            self.madeChoice = True
-                            print("Shot the other persn")
+                    if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                        if not self.hasSpinned:
+                            if t0.text_rect.collidepoint(pos):
+                                spins = self.rollDice()
+                                self.answer = self.Revolver.canShoot(spins)
+                                print("Spinned")
+                                self.hasSpinned = True
+                        else:
+                            if t1.text_rect.collidepoint(pos):
+                                self.isShootingSelf = True
+                                self.madeChoice = True
+                                print("Shot MYself")
+                            elif t2.text_rect.collidepoint(pos):
+                                self.isShootingSelf = False
+                                self.madeChoice = True
+                                print("Shot the other persn")
 
             if self.madeChoice:
                 print(self.answer)
                 if self.answer and self.isShootingSelf:
                     # Go To Death Screen
+                    self.display.fill((0, 0, 0))
                     print("YOu DieD HAHAHAHAHA")
+
                     return False
                 elif self.answer and not self.isShootingSelf:
                     # Go to Win Screen
                     print("YOu WON HAHAHAHAHA")
+                    self.display.fill((255, 255, 255))
                     return True
                 elif not self.answer and not self.isShootingSelf:
                     # Changes the turn to the opp
@@ -121,27 +139,35 @@ class Game():
                     self.isPlayerTurn = False
                     self.madeChoice = False
                     opp.speak(
-                        "You're lucky this time... Go Again...", self.display)
+                        "My Turn...", self.display)
+                    self.hasSpinned = False
+
                 else:
-                    self.madeChoice = True
+                    self.madeChoice = False
+                    self.hasSpinned = False
 
         elif not self.isPlayerTurn:
             print("IS it my turn?")
-            opp.speak("My TURN BITCHHHHH", self.display)
+            opp.speak("My TURN HAHAHAHHA", self.display)
             spins = self.rollDice()
             self.answer = self.Revolver.canShoot(spins)
             self.isShootingSelf = opp.nextMove(self.Revolver)
 
             if self.answer and self.isShootingSelf:
                 # Go To Win Screen
+                opp.speak("OHHH.... You Have defeated me", self.display)
+
                 print("YOu WON AHHHHHHHH")
-                return True
+                return
             elif self.answer and not self.isShootingSelf:
                 # Go to LOse Screen
+                opp.speak("HAHAHHAHAHA DIEEEE HAHAHAHAHAHAHA", self.display)
+
                 print("YOu LOST AAHHHHHHHAHAHAHAHA")
-                return False
+                return
             elif not self.answer and not self.isShootingSelf:
                 # Changes the turn to the opp
+
                 print("Changed Turn")
                 self.isPlayerTurn = True
                 opp.speak("Your Turn", self.display)
