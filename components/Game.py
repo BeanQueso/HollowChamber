@@ -5,14 +5,9 @@ from components.Text import Text
 from components.Revolver import Revolver
 from components.Player import Player
 from components.Bubble import Bubble
-from components.Opponents import MathyMartha
-from components.Opponents import RiskyRick
-from components.Opponents import AggressiveAlex
-from components.Opponents import CautiousCarl
-from components.Opponents import BluffingBetty
+from components.Opponents import MathyMartha, RiskyRick, AggressiveAlex, CautiousCarl, BluffingBetty
 
-
-class Game():
+class Game:
     def __init__(self, display):
         self.display = display
         self.Revolver = Revolver(6)
@@ -30,23 +25,16 @@ class Game():
         bettyCharacter = BluffingBetty(self.display)
 
         self.opponentsGroup = pygame.sprite.Group()
-
-        self.opponentsGroup.add(marthaCharacter)
-        self.opponentsGroup.add(rickCharacter)
-        self.opponentsGroup.add(alexCharacter)
-        self.opponentsGroup.add(carlCharacter)
-        self.opponentsGroup.add(bettyCharacter)
+        self.opponentsGroup.add(marthaCharacter, rickCharacter, alexCharacter, carlCharacter, bettyCharacter)
 
         self.player = Player(640, 600)
         self.playerGroup = pygame.sprite.Group()
-
         self.playerGroup.add(self.player)
 
         self.loseImage = pygame.image.load("assets/LoseScreen.png")
-        self.loseImage = pygame.transform.scale(self.loseImage,[1280,800])
-
+        self.loseImage = pygame.transform.scale(self.loseImage, [1280, 800])
         self.winImage = pygame.image.load("assets/WinScreen.png")
-        self.winImage = pygame.transform.scale(self.winImage,[1280,800])
+        self.winImage = pygame.transform.scale(self.winImage, [1280, 800])
 
     def drawStartScreen(self):
         self.display.fill((50, 0, 20))
@@ -54,129 +42,37 @@ class Game():
         welcomeText = Text(640, 100, "Hollow Chamber", (255, 0, 0), 130)
         welcomeText.show(self.display)
 
-        optionText = Text(640, 180, "Choose your operator",
-                          (255, 255, 255), 34)
+        optionText = Text(640, 180, "Choose your operator", (255, 255, 255), 34)
         optionText.show(self.display)
 
         x = 230
-
-        for i in self.opponentsGroup:
-            i.renderStart(x, 600)
+        for opponent in self.opponentsGroup:
+            opponent.rect.x = x
+            opponent.rect.y = 600
+            opponent.renderStart(x, 600)
             x += 240
 
     def drawPlayScreen(self, opponent):
         self.display.fill((50, 0, 20))
         opponent.renderPlaying()
 
-        startBubble = Bubble(opponent.rect.x+opponent.rect.width/2,
-                             opponent.rect.y-50, opponent.bubbleWidth)
-        startMessage = Text(startBubble.rect.centerx,
-                            startBubble.rect.centery, opponent.startMessage, (0, 0, 0), 28)
-
-        startBubble.show(self.display)
-        startMessage.show(self.display)
+        startBubble = Bubble(opponent.rect.x + opponent.rect.width / 2, opponent.rect.y - 50, opponent.bubbleWidth)
+        startMessage = Text(startBubble.rect.centerx, startBubble.rect.centery, opponent.startMessage, (0, 0, 0), 28)
+        
+        playerResponse = Text(self.player.rect.centerx + 200, self.player.rect.centery, "Nuh uh.", (0, 0, 0), 28)
+        playerBubble = Bubble(playerResponse.text_rect.centerx, playerResponse.text_rect.centery, 100)
 
         self.playerGroup.draw(self.display)
 
-        playerResponse = Text(self.player.rect.centerx+200,
-                              self.player.rect.centery, "Nuh uh.", (0, 0, 0), 28)
-        playerBubble = Bubble(playerResponse.text_rect.centerx,
-                              playerResponse.text_rect.centery, 100)
+        current_time = pygame.time.get_ticks()
 
-        playerBubble.show(self.display)
-        playerResponse.show(self.display)
-
-        if(pygame.time.get_ticks()-self.startTime>2000):
-            self.doGameLoop(opponent)
+        if current_time - self.startTime < 4000:
+            playerBubble.show(self.display)
+            playerResponse.show(self.display)
+            startBubble.show(self.display)
+            startMessage.show(self.display)
+        else:
+            opponent.speak("Your Turn...", self.display)
 
     def rollDice(self):
         return random.randint(1, 6)
-
-    def doGameLoop(self, opp):
-        if self.isPlayerTurn:
-            self.player.speak("Hmm...", self.display)
-            opp.speak("Your Turn", self.display)
-
-            if not self.madeChoice:
-                if not self.hasSpinned:
-                    opp.speak("Spin the Revolver Little Boy...", self.display)
-                    t0 = Text(200, 400, "Spin Revovler", (255, 255, 255), 50)
-                    t0.show(self.display)
-                else:
-                    t1 = Text(200, 400, "Shoot Yourself", (255, 255, 255), 50)
-                    t1.show(self.display)
-                    t2 = Text(1080, 400, "Shoot Opponent", (255, 255, 255), 50)
-                    t2.show(self.display)
-                    
-                for event in pygame.event.get():
-
-                    pos = pygame.mouse.get_pos()
-
-                    if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                        if self.hasSpinned == False:
-                            if t0.text_rect.collidepoint(pos):
-                                spins = self.rollDice()
-                                self.answer = self.Revolver.canShoot(spins)
-                                print("Spinned")
-                                self.hasSpinned = True
-                                
-                        else:
-                            if t1.text_rect.collidepoint(pos):
-                                self.isShootingSelf = True
-                                self.madeChoice = True
-                                print("Pointing at self")
-                            elif t2.text_rect.collidepoint(pos):
-                                self.isShootingSelf = False
-                                self.madeChoice = True
-                                print("pointing at opponent")
-
-            if self.madeChoice:
-                print(self.answer)
-                if self.answer and self.isShootingSelf:
-                    # Go To Death Screen
-                    self.display.blit(self.loseImage,[0,0])
-                    print("YOu DieD HAHAHAHAHA")
-                    return False
-                elif self.answer and not self.isShootingSelf:
-                    # Go to Win Screen
-                    print("YOu WON HAHAHAHAHA")
-                    self.display.blit(self.win, [0,0])
-                    return True
-                elif not self.answer and not self.isShootingSelf:
-                    # Changes the turn to the opp
-                    print("Changed Turn")
-                    self.isPlayerTurn = False
-                    opp.speak(
-                        "My Turn...", self.display)
-
-                    self.madeChoice = False
-                    self.hasSpinned = False
-
-                else:
-                    self.madeChoice = False
-                    self.hasSpinned = False
-
-        elif not self.isPlayerTurn:
-            print("IS it my turn?")
-            opp.speak("My TURN HAHAHAHHA", self.display)
-            
-            spins = self.rollDice()
-            self.answer = self.Revolver.canShoot(spins)
-            self.isShootingSelf = opp.nextMove(self.Revolver)
-                
-            if self.answer and self.isShootingSelf:
-                # Go To Win Screen
-                opp.speak("OHHH.... You Have defeated me", self.display)
-                print("YOu WON AHHHHHHHH")
-                return
-            elif self.answer and not self.isShootingSelf:
-                # Go to LOse Screen
-                opp.speak("HAHAHHAHAHA DIEEEE HAHAHAHAHAHAHA", self.display)
-                print("YOu LOST AAHHHHHHHAHAHAHAHA")
-                return
-            elif not self.answer and not self.isShootingSelf:
-                # Changes the turn to the opp
-
-                print("Changed Turn")
-                self.isPlayerTurn = True
-                opp.speak("Your Turn", self.display)

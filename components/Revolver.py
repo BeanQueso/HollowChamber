@@ -1,7 +1,6 @@
 import random
 
-
-class Revolver():
+class Revolver:
 
     def __init__(self, maxCapacity):
         self.previousShots = [False] * maxCapacity
@@ -9,25 +8,25 @@ class Revolver():
         self.myIndex = random.randint(0, maxCapacity - 1)
         self.maxCapacity = maxCapacity
 
-    def spinRevolver(self, spins): #spins decided by the dice rolled
-        for i in range(spins):
+    def spinRevolver(self, spins): # spins decided by the dice rolled
+        for _ in range(spins):
             if self.myIndex == self.maxCapacity - 1:
                 self.myIndex = 0
             else:
                 self.myIndex += 1
 
-    def canShoot(self, spins): #will return whether or not the gun will shoot a bullet
+    def canShoot(self, spins): # will return whether or not the gun will shoot a bullet
         self.spinRevolver(spins)
-        if (self.myIndex == self.revolverIndex and not self.previousIndices[self.myIndex]):
+        if self.myIndex == self.revolverIndex and not self.previousShots[self.myIndex]:
+            self.previousShots = [False] * self.maxCapacity
             return True
 
-        self.previousIndices[self.myIndex] = True
-        self.canShoot(spins)
+        self.previousShots[self.myIndex] = True
         return False
 
     def getChances(self):
         x = 0
-        for i in self.previousShots:
-            if not i:
+        for shot in self.previousShots:
+            if not shot:
                 x += 1
-        return 1/x
+        return 1 / x
