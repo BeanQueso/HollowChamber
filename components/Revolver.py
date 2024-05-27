@@ -15,11 +15,8 @@ class Revolver():
 
     def canShoot(self, spins):
         self.spinRevolver(spins)
-        if (self.myIndex == self.revolverIndex and not self.previousIndices[self.myIndex]):
+        if (self.myIndex == self.revolverIndex):
             return True
-
-        self.previousIndices[self.myIndex] = True
-        self.canShoot(spins)
         return False
 
     def getChances(self):
