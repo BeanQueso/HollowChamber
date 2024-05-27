@@ -18,20 +18,12 @@ class Revolver():
 
     def canShoot(self, spins): #will return whether or not the gun will shoot a bullet
         self.spinRevolver(spins)
-        while True:
-            if self.previousShots[self.myIndex] == False:
-                if self.myIndex == self.revolverIndex:
-                    self.previousShots = [False] * self.maxCapacity
-                    return True
-                else:
-                    self.previousShots[self.myIndex] = True
-                    return False
-                    
-            self.spinRevolver(spins)
+        if (self.myIndex == self.revolverIndex and not self.previousIndices[self.myIndex]):
+            return True
 
-
-        
-        
+        self.previousIndices[self.myIndex] = True
+        self.canShoot(spins)
+        return False
 
     def getChances(self):
         x = 0
