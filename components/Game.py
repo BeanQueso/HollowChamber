@@ -21,6 +21,7 @@ class Game():
         self.answer = None
         self.madeChoice = False
         self.hasSpinned = False
+        self.startTime = 0
 
         marthaCharacter = MathyMartha(self.display)
         rickCharacter = RiskyRick(self.display)
@@ -40,6 +41,12 @@ class Game():
         self.playerGroup = pygame.sprite.Group()
 
         self.playerGroup.add(self.player)
+
+        self.loseImage = pygame.image.load("assets/LoseScreen.png")
+        self.loseImage = pygame.transform.scale(self.loseImage,[1280,800])
+
+        self.winImage = pygame.image.load("assets/WinScreen.png")
+        self.winImage = pygame.transform.scale(self.winImage,[1280,800])
 
     def drawStartScreen(self):
         self.display.fill((50, 0, 20))
@@ -79,7 +86,8 @@ class Game():
         playerBubble.show(self.display)
         playerResponse.show(self.display)
 
-        self.doGameLoop(opponent)
+        if(pygame.time.get_ticks()-self.startTime>2000):
+            self.doGameLoop(opponent)
 
     def rollDice(self):
         return random.randint(1, 6)
@@ -99,47 +107,49 @@ class Game():
                     t1.show(self.display)
                     t2 = Text(1080, 400, "Shoot Opponent", (255, 255, 255), 50)
                     t2.show(self.display)
+                    
                 for event in pygame.event.get():
 
                     pos = pygame.mouse.get_pos()
 
                     if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                        if not self.hasSpinned:
+                        if self.hasSpinned == False:
                             if t0.text_rect.collidepoint(pos):
                                 spins = self.rollDice()
                                 self.answer = self.Revolver.canShoot(spins)
                                 print("Spinned")
                                 self.hasSpinned = True
+                                
                         else:
                             if t1.text_rect.collidepoint(pos):
                                 self.isShootingSelf = True
                                 self.madeChoice = True
-                                print("Shot MYself")
+                                print("Pointing at self")
                             elif t2.text_rect.collidepoint(pos):
                                 self.isShootingSelf = False
                                 self.madeChoice = True
-                                print("Shot the other persn")
+                                print("pointing at opponent")
 
             if self.madeChoice:
                 print(self.answer)
                 if self.answer and self.isShootingSelf:
                     # Go To Death Screen
-                    self.display.fill((0, 0, 0))
+                    self.display.blit(self.loseImage,[0,0])
                     print("YOu DieD HAHAHAHAHA")
-
                     return False
                 elif self.answer and not self.isShootingSelf:
                     # Go to Win Screen
                     print("YOu WON HAHAHAHAHA")
-                    self.display.fill((255, 255, 255))
+                    self.display.blit(self.win, [0,0])
                     return True
                 elif not self.answer and not self.isShootingSelf:
                     # Changes the turn to the opp
                     print("Changed Turn")
                     self.isPlayerTurn = False
-                    self.madeChoice = False
                     opp.speak(
                         "My Turn...", self.display)
+
+                    self.madeChoice = False
                     self.hasSpinned = False
 
                 else:
@@ -149,20 +159,19 @@ class Game():
         elif not self.isPlayerTurn:
             print("IS it my turn?")
             opp.speak("My TURN HAHAHAHHA", self.display)
+            
             spins = self.rollDice()
             self.answer = self.Revolver.canShoot(spins)
             self.isShootingSelf = opp.nextMove(self.Revolver)
-
+                
             if self.answer and self.isShootingSelf:
                 # Go To Win Screen
                 opp.speak("OHHH.... You Have defeated me", self.display)
-
                 print("YOu WON AHHHHHHHH")
                 return
             elif self.answer and not self.isShootingSelf:
                 # Go to LOse Screen
                 opp.speak("HAHAHHAHAHA DIEEEE HAHAHAHAHAHAHA", self.display)
-
                 print("YOu LOST AAHHHHHHHAHAHAHAHA")
                 return
             elif not self.answer and not self.isShootingSelf:

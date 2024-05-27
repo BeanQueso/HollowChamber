@@ -29,9 +29,7 @@ playing = False
 
 chosen = None
 
-
 mainGame = Game.Game(display_surface)
-
 
 while running:
 
@@ -49,6 +47,7 @@ while running:
                 pos = pygame.mouse.get_pos()
                 for opp in mainGame.opponentsGroup:
                     if opp.rect.collidepoint(pos):
+                        mainGame.startTime = pygame.time.get_ticks()
                         starting = False
                         playing = True
                         chosen = opp
