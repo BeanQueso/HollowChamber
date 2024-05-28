@@ -1,0 +1,11 @@
+1. Go to the main.py file
+2. Click on the Play button OR go to the 'HollowChamber' directory, and run: python3 main.py
+3. When in game...
+    - Choose your operator.
+    - Click on the dice button to roll the dice.
+    - Click on the action you want to do. You can either shoot yourself (which will skip the opponent's turn, allowing you to roll the dice 
+      again), or shoot the opponent which will give the turn over to them.
+    - When on the opponent's turn, click on the big red button which will complete their action.
+    - Repeat this until you win, or lose.
+    - When on either endscreens, click the play-again button.
+    - To exit the game, go to the terminal where you ran the game, and press control+c
