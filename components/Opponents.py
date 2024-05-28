@@ -3,13 +3,12 @@ from components.Text import Text
 from components.Bubble import Bubble
 import random
 
-
 class Opponents(pygame.sprite.Sprite):
     def __init__(self, name, display):
         super().__init__()
         self.display = display
         self.name = name
-        self.image = pygame.image.load("assets/"+self.name+".png")
+        self.image = pygame.image.load("assets/" + self.name + ".png")
         self.image = pygame.transform.scale(self.image, [400, 400])
         self.rect = self.image.get_rect()
 
@@ -18,8 +17,7 @@ class Opponents(pygame.sprite.Sprite):
         self.rect.centerx = x
         self.rect.centery = y
 
-        text = Text(self.rect.centerx-75, self.rect.centery +
-                    100, self.name, (255, 255, 255), 34)
+        text = Text(self.rect.centerx - 75, self.rect.centery + 100, self.name, (255, 255, 255), 34)
 
         self.display.blit(self.image, self.rect)
         text.show(self.display)
@@ -29,8 +27,7 @@ class Opponents(pygame.sprite.Sprite):
         self.rect.centerx = 640
         self.rect.centery = 300
 
-        text = Text(self.rect.centerx, self.rect.centery +
-                    self.textDiff, self.name, (255, 255, 255), 34)
+        text = Text(self.rect.centerx, self.rect.centery + self.textDiff, self.name, (255, 255, 255), 34)
         text.show(self.display)
         self.display.blit(self.image, self.rect)
 
@@ -38,15 +35,12 @@ class Opponents(pygame.sprite.Sprite):
         pass
 
     def speak(self, message, display):
-        startBubble = Bubble(self.rect.x+self.rect.width/2,
-                             self.rect.y-50, self.bubbleWidth)
-        startMessage = Text(startBubble.rect.centerx,
-                            startBubble.rect.centery, message, (0, 0, 0), 28)
+        startBubble = Bubble(self.rect.x + self.rect.width / 2, self.rect.y - 50, self.bubbleWidth)
+        startMessage = Text(startBubble.rect.centerx, startBubble.rect.centery, message, (0, 0, 0), 28)
 
         startBubble.show(display)
         startMessage.show(display)
-        # True for Next Move means that you choose to shoot yourself
-        # False means that you choose to shoot the player
+        # True -> shoot urself, False -> shoot other
 
 
 class RiskyRick(Opponents):
@@ -57,10 +51,8 @@ class RiskyRick(Opponents):
         self.textDiff = 195
 
     def nextMove(self, revolver):
-        chance = random.randint(1, 10)
-        if chance <= 8 and chance >= 1:
-            return True
-        return False
+        chance = random.random()
+        return chance < 0.8  #80% chance to shoot himself
 
 
 class MathyMartha(Opponents):
@@ -72,12 +64,8 @@ class MathyMartha(Opponents):
 
     def nextMove(self, revolver):
         chance = revolver.getChances()
-
-        weightedChance = chance + random.randint(0, 1)
-
-        if weightedChance < 1.3:
-            return True
-        return False
+        weightedChance = chance + random.uniform(0, 0.5)  # a little randomness -> chance is 1/unfiredchambers
+        return weightedChance < 1.3
 
 
 class AggressiveAlex(Opponents):
@@ -88,10 +76,8 @@ class AggressiveAlex(Opponents):
         self.textDiff = 230
 
     def nextMove(self, revolver):
-        chance = random.randint(1, 10)
-        if (chance <= 9 and chance >= 1):
-            return False
-        return True
+        chance = random.random()
+        return chance > 0.1  #90% chance, very aggressive
 
 
 class CautiousCarl(Opponents):
@@ -102,10 +88,8 @@ class CautiousCarl(Opponents):
         self.textDiff = 195
 
     def nextMove(self, revolver):
-        chance = random.randint(1, 10)
-        if (chance <= 9 and chance >= 1):
-            return False
-        return True
+        chance = random.random()
+        return chance < 0.1  #10%chance, scared
 
 
 class BluffingBetty(Opponents):
@@ -116,7 +100,5 @@ class BluffingBetty(Opponents):
         self.textDiff = 185
 
     def nextMove(self, revolver):
-        chance = random.randint(1, 10)
-        if (chance <= 9 and chance >= 1):
-            return False
-        return True
+        chance = random.random()
+        return chance < 0.5  #50% chance,unpredictable

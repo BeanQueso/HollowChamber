@@ -2,21 +2,21 @@ import random
 import pygame
 
 from components.Text import Text
-from components.Revolver import Revolver
 from components.Player import Player
 from components.Bubble import Bubble
 from components.Opponents import MathyMartha, RiskyRick, AggressiveAlex, CautiousCarl, BluffingBetty
+from components.Revolver import Revolver
 
 class Game:
     def __init__(self, display):
         self.display = display
-        self.Revolver = Revolver(6)
         self.isPlayerTurn = True
         self.isShootingSelf = None
         self.answer = None
         self.madeChoice = False
         self.hasSpinned = False
         self.startTime = 0
+        self.Revolver = Revolver(6)
 
         marthaCharacter = MathyMartha(self.display)
         rickCharacter = RiskyRick(self.display)
@@ -71,8 +71,6 @@ class Game:
             playerResponse.show(self.display)
             startBubble.show(self.display)
             startMessage.show(self.display)
-        else:
-            opponent.speak("Your Turn...", self.display)
 
     def rollDice(self):
         return random.randint(1, 6)
