@@ -29,10 +29,12 @@ action_time = 0
 wait_time = 1000 
 miss_display_time = 0
 miss_display_duration = 1000 
+options_display_time = 0
+options_display_delay = 1000 
 
 current_message = ""
 
-spin_button_img = pygame.image.load("assets/spin_button.png")
+spin_button_img = pygame.image.load("assets/spin5.png")
 spin_button_img = pygame.transform.scale(spin_button_img, (150, 150))
 shoot_yourself_button_img = pygame.image.load("assets/shoot_yourself_button.png")
 shoot_yourself_button_img = pygame.transform.scale(shoot_yourself_button_img, (200, 200))
@@ -99,8 +101,11 @@ while running:
                 if not spunRevolver:
                     display_surface.blit(spin_button_img, spin_button_rect.topleft)
                 else:
-                    display_surface.blit(shoot_yourself_button_img, shoot_yourself_button_rect.topleft)
-                    display_surface.blit(shoot_opponent_button_img, shoot_opponent_button_rect.topleft)
+                    if current_time - options_display_time < options_display_delay:
+                        display_surface.blit(spin_button_img, spin_button_rect.topleft)
+                    else:
+                        display_surface.blit(shoot_yourself_button_img, shoot_yourself_button_rect.topleft)
+                        display_surface.blit(shoot_opponent_button_img, shoot_opponent_button_rect.topleft)
             else:
                 display_surface.blit(opponent_action_button_img, opponent_action_button_rect.topleft)
 
@@ -127,34 +132,40 @@ while running:
                 if not spunRevolver:
                     if spin_button_rect.collidepoint(pos):
                         pygame.mixer.Sound.play(click_sound)
-                        canShoot = mainGame.Revolver.canShoot(spinDice())
+                        spin = spinDice()
+
+                        spin_button_img = pygame.image.load("assets/spin" + str(spin) + ".png")
+                        spin_button_img = pygame.transform.scale(spin_button_img, (150, 150))
+
+                        canShoot = mainGame.Revolver.canShoot(spin)
                         spunRevolver = True
                         action_time = current_time
+                        options_display_time = current_time
                 else:
-                    if shoot_yourself_button_rect.collidepoint(pos):
-                        pygame.mixer.Sound.play(click_sound)
-                        if canShoot:
-                            pygame.mixer.Sound.play(shot_sound)
-                            lostGame = True
-                        else:
-                            pygame.mixer.Sound.play(miss_sound)
-                            miss_display_time = current_time
-                            spunRevolver = False
-                            current_message = "Lucky... that was close"
-                        action_time = current_time
-                    elif shoot_opponent_button_rect.collidepoint(pos):
-                        pygame.mixer.Sound.play(click_sound)
-                        if canShoot:
-                            pygame.mixer.Sound.play(shot_sound)
-                            wonGame = True
-                        else:
-                            pygame.mixer.Sound.play(miss_sound)
-                            miss_display_time = current_time
-                            isPlayerTurn = False
-                            spunRevolver = False
-                            # Change the message for the next action
-                            current_message = "HA! YOU MISSED! MY TURN!"
-                        action_time = current_time
+                    if current_time - options_display_time >= options_display_delay:
+                        if shoot_yourself_button_rect.collidepoint(pos):
+                            pygame.mixer.Sound.play(click_sound)
+                            if canShoot:
+                                pygame.mixer.Sound.play(shot_sound)
+                                lostGame = True
+                            else:
+                                pygame.mixer.Sound.play(miss_sound)
+                                miss_display_time = current_time
+                                spunRevolver = False
+                                current_message = "Lucky... that was close"
+                            action_time = current_time
+                        elif shoot_opponent_button_rect.collidepoint(pos):
+                            pygame.mixer.Sound.play(click_sound)
+                            if canShoot:
+                                pygame.mixer.Sound.play(shot_sound)
+                                wonGame = True
+                            else:
+                                pygame.mixer.Sound.play(miss_sound)
+                                miss_display_time = current_time
+                                isPlayerTurn = False
+                                spunRevolver = False
+                                current_message = "HA! YOU MISSED! MY TURN!"
+                            action_time = current_time
             else:
                 if opponent_action_button_rect.collidepoint(pos):
                     pygame.mixer.Sound.play(click_sound)
