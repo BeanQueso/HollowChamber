@@ -30,7 +30,7 @@ wait_time = 1000
 miss_display_time = 0
 miss_display_duration = 1000 
 options_display_time = 0
-options_display_delay = 1000 
+options_display_delay = 1000
 
 current_message = ""
 
@@ -42,11 +42,14 @@ shoot_opponent_button_img = pygame.image.load("assets/shoot_opponent_button.png"
 shoot_opponent_button_img = pygame.transform.scale(shoot_opponent_button_img, (200, 200))
 opponent_action_button_img = pygame.image.load("assets/opponent_action_button.png")
 opponent_action_button_img = pygame.transform.scale(opponent_action_button_img, (200, 200))
+restart_button_img = pygame.image.load("assets/restart_button.png")
+restart_button_img = pygame.transform.scale(restart_button_img, (200, 100))
 
 spin_button_rect = spin_button_img.get_rect(topleft=(1080, 300))
 shoot_yourself_button_rect = shoot_yourself_button_img.get_rect(topleft=(1080, 210))
 shoot_opponent_button_rect = shoot_opponent_button_img.get_rect(topleft=(1080, 440))
 opponent_action_button_rect = opponent_action_button_img.get_rect(topleft=(50, 190))
+restart_button_rect = restart_button_img.get_rect(center=(940, 400))
 
 hit_sign_img = pygame.image.load("assets/miss_image.png")
 hit_sign_img = pygame.transform.scale(hit_sign_img, (100, 100))
@@ -82,6 +85,22 @@ def renderMessage():
         message_bubble.show(display_surface)
         message_text.show(display_surface)
 
+def restartGame():
+    global starting, playing, isPlayerTurn, spunRevolver, canShoot, lostGame, wonGame, action_time, miss_display_time, options_display_time, current_message, chosenOpp, mainGame
+    starting = True
+    playing = False
+    isPlayerTurn = True
+    spunRevolver = False
+    canShoot = None
+    lostGame = False
+    wonGame = False
+    action_time = 0
+    miss_display_time = 0
+    options_display_time = 0
+    current_message = ""
+    chosenOpp = None
+    mainGame = Game(display_surface)
+
 while running:
     display_surface.fill((0, 0, 0)) 
 
@@ -89,8 +108,10 @@ while running:
 
     if lostGame:
         display_surface.blit(loseScreen, [0, 0])
+        display_surface.blit(restart_button_img, restart_button_rect.topleft)
     elif wonGame:
         display_surface.blit(winScreen, [0, 0])
+        display_surface.blit(restart_button_img, restart_button_rect.topleft)
     else:
         if starting:
             renderOpponentSelection()
@@ -116,7 +137,12 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        if starting and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+        if lostGame or wonGame:
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if restart_button_rect.collidepoint(event.pos):
+                    pygame.mixer.Sound.play(click_sound)
+                    restartGame()
+        elif starting and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             pos = pygame.mouse.get_pos()
             for opp in mainGame.opponentsGroup:
                 if opp.rect.collidepoint(pos):
